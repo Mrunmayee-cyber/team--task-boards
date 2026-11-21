@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Task Boards</title>
+  <style>
+    :root {
+      --sidebar: #111827;
+      --white: #ffffff;
+      --bg: #f4f6f9;
+      --text: #172033;
+      --gray: #6b7280;
+      --primary: #6366f1;
+      --column: #e9edf3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      flex: 0 0 220px;
+      background: var(--sidebar);
+      padding: 28px 16px;
+    }
+
+    .logo {
+      margin: 0 0 30px;
+      color: var(--white);
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .menu {
+      display: grid;
+      gap: 6px;
+    }
+
+    .menu button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #cbd5e1;
+      padding: 12px 14px;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .menu button:hover,
+    .menu button.active {
+      background: #252d3d;
+      color: var(--white);
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+      padding: 0 25px;
+    }
+
+    .search {
+      width: min(350px, 45%);
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font: inherit;
+    }
+
+    .profile {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .profile span {
+      color: #22c55e;
+      font-size: 10px;
+    }
+
+    .content {
+      padding: 25px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+    }
+
+    .add-task {
+      border: 0;
+      border-radius: 6px;
+      background: var(--primary);
+      color: var(--white);
+      padding: 10px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .subtitle {
+      margin: 5px 0 20px;
+      color: var(--gray);
+      font-size: 10px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 180px));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      height: 80px;
+      border-radius: 8px;
+      background: var(--white);
+      padding: 12px 15px;
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--gray);
+      font-size: 9px;
+      margin-bottom: 5px;
+    }
+
+    .stat strong {
+      font-size: 20px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .column {
+      min-height: 310px;
+      border-radius: 8px;
+      background: var(--column);
+      padding: 10px;
+    }
+
+    .column-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 4px 12px;
+    }
+
+    .column-heading strong {
+      font-size: 12px;
+    }
+
+    .count {
+      min-width: 24px;
+      border-radius: 10px;
+      background: #d6dbe3;
+      color: var(--gray);
+      padding: 4px 7px;
+      font-size: 9px;
+      text-align: center;
+    }
+
+    .card {
+      min-height: 100px;
+      border-radius: 7px;
+      background: var(--white);
+      margin-bottom: 8px;
+      padding: 10px 12px;
+    }
+
+    .priority {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    .priority.high { color: #dc2626; }
+    .priority.medium { color: #d97706; }
+    .priority.low { color: #16a34a; }
+
+    .card strong {
+      display: block;
+      font-size: 10px;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--gray);
+      font-size: 8px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 180px; flex-basis: 180px; }
+      .stats { grid-template-columns: repeat(2, minmax(140px, 180px)); }
+      .board { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .app { display: block; }
+      .sidebar { width: 100%; }
+      .menu { grid-template-columns: repeat(2, 1fr); }
+      .board { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2 class="logo">TeamTask</h2>
+      <nav class="menu">
+        <button class="active">▦ &nbsp; Task Board</button>
+        <button>✓ &nbsp; My Tasks</button>
+        <button>✓ &nbsp; Completed</button>
+        <button>♟ &nbsp; Members</button>
+        <button>⚙ &nbsp; Settings</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <input class="search" type="search" placeholder="Search tasks..." aria-label="Search tasks">
+        <div class="profile">Alex Morgan &nbsp; <span>●</span></div>
+      </header>
+
+      <section class="content">
+        <div class="header">
+          <h1>Team Task Board</h1>
+          <button class="add-task" id="addTask">+ Add Task</button>
+        </div>
+        <p class="subtitle">Manage your team's work and track project progress.</p>
+
+        <div class="stats">
+          <div class="stat"><span class="stat-label">Total Tasks</span><strong>12</strong></div>
+          <div class="stat"><span class="stat-label">In Progress</span><strong>4</strong></div>
+          <div class="stat"><span class="stat-label">Completed</span><strong>5</strong></div>
+          <div class="stat"><span class="stat-label">Team Members</span><strong>6</strong></div>
+        </div>
+
+        <div class="board" id="board"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const columns = [
+      {
+        title: "To Do",
+        tasks: [
+          ["HIGH", "Design dashboard UI", "Create the initial dashboard layout."],
+          ["MEDIUM", "Write documentation", "Prepare project documentation."],
+          ["LOW", "Update team profile", "Add team member information."]
+        ]
+      },
+      {
+        title: "In Progress",
+        tasks: [
+          ["HIGH", "Build authentication", "Implement login and registration."],
+          ["MEDIUM", "Create API integration", "Connect frontend with API."]
+        ]
+      },
+      {
+        title: "Review",
+        tasks: [
+          ["HIGH", "Review landing page", "Check UI before release."],
+          ["LOW", "Check accessibility", "Review keyboard navigation."]
+        ]
+      },
+      {
+        title: "Done",
+        tasks: [
+          ["LOW", "Setup repository", "Create project repository."],
+          ["MEDIUM", "Setup environment", "Configure development tools."]
+        ]
+      }
+    ];
+
+    const board = document.getElementById("board");
+    const search = document.querySelector(".search");
+
+    function render(filter = "") {
+      board.innerHTML = "";
+      const query = filter.trim().toLowerCase();
+
+      columns.forEach(column => {
+        const tasks = column.tasks.filter(task =>
+          task.join(" ").toLowerCase().includes(query)
+        );
+
+        const section = document.createElement("section");
+        section.className = "column";
+
+        section.innerHTML =
+          '<div class="column-heading"><strong>' + column.title +
+          '</strong><span class="count">' + tasks.length + "</span></div>";
+
+        tasks.forEach(task => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML =
+            '<span class="priority ' + task[0].toLowerCase() + '">' + task[0] +
+            "</span><strong>" + task[1] + "</strong><p>" + task[2] + "</p>";
+          section.appendChild(card);
+        });
+
+        board.appendChild(section);
+      });
+    }
+
+    search.addEventListener("input", event => render(event.target.value));
+
+    document.getElementById("addTask").addEventListener("click", () => {
+      alert("Task creation form can be added here.");
+    });
+
+    document.querySelectorAll(".menu button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelector(".menu button.active")?.classList.remove("active");
+        button.classList.add("active");
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
